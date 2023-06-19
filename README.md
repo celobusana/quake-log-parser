@@ -1,4 +1,4 @@
-## GAME LOG ANALYZER
+# GAME LOG ANALYZER
 
 ## Installation
 - Install python 3
@@ -12,17 +12,17 @@
 - Isort
 - Mypy
 
-# Run code quality tools
+### Run code quality tools
 - `cd src`
 - `black .`
 - `isort .`
 - `flake8 .`
 - `mypy .`
 
-### Run
-# CLI
+## Run
+### CLI
 - `python src/main.py --log-file=examples/quake_games.log`
 - `python src/main.py --log-file=examples/quake_games.log --log-level=DEBUG`
 
-# VS CODE
+### VS CODE
 Use the launch.json file to run the code
