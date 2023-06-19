@@ -7,18 +7,17 @@
 - Install dev requirements `pip install -r requirements_dev.txt`
   
 ## Code Quality Tools
-- Flake8 `flake8`
+- Flake8
 - Black
 - Isort
 - Mypy
 
 # Run code quality tools
-`cd src`
-`black .`
-`isort .`
-`flake8 .`
-`mypy .`
-`
+- `cd src`
+- `black .`
+- `isort .`
+- `flake8 .`
+- `mypy .`
 
 ### Run
 # CLI
