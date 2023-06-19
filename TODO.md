@@ -2,12 +2,12 @@
 - [X] Organize the code and make more interfaces
 - [X] Change _parse_line contract to a specif object ou dict
 
-# CODE PATTERN
-- [ ] Update readme
-- [ ] Add class/function documentation
-- [ ] Apply flake8
-- [ ] Apply black
-- [ ] Apply isort
-- [ ] Mypy checking
-- [ ] Create venv
-- [ ] Create requirements
+# CODE QUALITY
+- [X] Update readme
+- [X] Add class/function documentation
+- [X] Apply flake8
+- [X] Apply black
+- [X] Apply isort
+- [X] Mypy checking
+- [X] Create venv
+- [X] Create requirements

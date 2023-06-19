@@ -2,13 +2,25 @@
     "version": "0.2.0",
     "configurations": [
       {
-        "name": "Python: src/main.py",
+        "name": "Run log analyzer",
         "type": "python",
         "request": "launch",
         "program": "${workspaceFolder}/src/main.py",
         "console": "integratedTerminal",
         "cwd": "${workspaceFolder}",
         "env": {},
+        "args": ["--log-file", "examples/quake_games.log"],
+        "justMyCode": false
+      },
+      {
+        "name": "Run log analyzer (debug log)",
+        "type": "python",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/main.py",
+        "console": "integratedTerminal",
+        "cwd": "${workspaceFolder}",
+        "env": {},
+        "args": ["--log-file", "examples/quake_games.log", "--log-level", "DEBUG"],
         "justMyCode": false
       }
     ]

@@ -1,53 +1,45 @@
 import logging
 from abc import ABC, abstractmethod
-from factory import GameEventFactory
-from exception import EventException
-from typing import List, Dict
 from pprint import pprint
+from typing import List
 
-class Game(ABC):
-    
-    def __init__(self, name: str):
-        self.name = name
-        self._reset()
-        
-    @abstractmethod
-    def _reset(self):
-        pass
-    
-    @abstractmethod
-    def stats(self):
-        pass
+from exception import EventException
+from interfaces.dto import LogEventDto
 
-class GameEvent(ABC):
 
+class LogEventFactory:
+    def __init__(self):
+        self.events = {}
+
+    def register(self, event: "LogEvent"):
+        self.events[event.id] = event
+
+    def get(self, event_id: str) -> "LogEvent":
+        if event_id not in self.events:
+            raise EventException(f"Event {event_id} not registered")
+        return self.events[event_id]
+
+
+class LogEvent(ABC):
     def __init__(self, id: str):
         self.id = id
 
     @abstractmethod
-    def process(self, log: str):
+    def process(self, log_analyzer: "LogAnalyzer", log_event: LogEventDto):
         pass
-    
+
+
 class LogReader(ABC):
-    
     @abstractmethod
     def get_records(self) -> List[str]:
         pass
-    
-class LogEvent(ABC):
-    
-    def __init__(self, event: str, time: str, log: str):
-        self.event = event
-        self.time = time
-        self.log = log
-    
-class LogAnalyzer(ABC):
 
-    events: GameEventFactory
-    game: Game
+
+class LogAnalyzer(ABC):
+    events: LogEventFactory
     game_id: int = 0
 
-    def __init__(self, log: LogReader, events: GameEventFactory):
+    def __init__(self, log: LogReader, events: LogEventFactory):
         self.log = log
         self.events = events
 
@@ -60,22 +52,21 @@ class LogAnalyzer(ABC):
             log_event = self._parse_log(line)
             self._process_log_event(log_event)
         except EventException as e:
-            pass
+            logging.debug(e)
         except Exception as e:
             logging.exception(e)
 
-    def _process_log_event(self, log_event: LogEvent):
+    def _process_log_event(self, log_event: LogEventDto):
         self.events.get(log_event.event).process(self, log_event)
 
     def shutdown_game(self):
-        self.game_id += 1
         self.print_game_stats()
-        del(self.game)
+        self.game_id += 1
+        del self.game
 
     def print_game_stats(self):
         pprint({f"game_{self.game_id}": self.game.stats()})
 
     @abstractmethod
-    def _parse_log(self, line: str) -> LogEvent:
+    def _parse_log(self, line: str) -> LogEventDto:
         pass
-
