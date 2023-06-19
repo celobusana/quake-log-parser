@@ -1,6 +1,6 @@
-- [x] Fix kill count kill by means and by players are diff of total kills
-- [ ] Organize the code and make more interfaces
-- [ ] Change _parse_line contract to a specif object ou dict
+- [X] Fix kill count kill by means and by players are diff of total kills
+- [X] Organize the code and make more interfaces
+- [X] Change _parse_line contract to a specif object ou dict
 
 # CODE PATTERN
 - [ ] Update readme
@@ -8,5 +8,6 @@
 - [ ] Apply flake8
 - [ ] Apply black
 - [ ] Apply isort
+- [ ] Mypy checking
 - [ ] Create venv
 - [ ] Create requirements

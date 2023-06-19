@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from factory import GameEventFactory
 from exception import EventException
-from typing import List, Tuple
+from typing import List, Dict
 from pprint import pprint
 
 class Game(ABC):
@@ -34,6 +34,13 @@ class LogReader(ABC):
     def get_records(self) -> List[str]:
         pass
     
+class LogEvent(ABC):
+    
+    def __init__(self, event: str, time: str, log: str):
+        self.event = event
+        self.time = time
+        self.log = log
+    
 class LogAnalyzer(ABC):
 
     events: GameEventFactory
@@ -45,35 +52,30 @@ class LogAnalyzer(ABC):
         self.events = events
 
     def process(self):
-        lines = 0
-        for line in self.log.get_records():
-            lines += 1
-            if lines < 10:
-                continue
-            self._process_line(line)
+        for record in self.log.get_records():
+            self._process_log(record)
 
-    def _process_line(self, line: str):
+    def _process_log(self, line: str):
         try:
-            time, event, log = self._parse_line(line)
-            self._process_event(event, log)
+            log_event = self._parse_log(line)
+            self._process_log_event(log_event)
         except EventException as e:
-            # logging.warning(e)
             pass
         except Exception as e:
             logging.exception(e)
 
-    def _process_event(self, event: str, log: str):
-        self.events.get(event).process(self, log)
+    def _process_log_event(self, log_event: LogEvent):
+        self.events.get(log_event.event).process(self, log_event)
 
     def shutdown_game(self):
         self.game_id += 1
         self.print_game_stats()
-        del (self.game)
+        del(self.game)
 
     def print_game_stats(self):
         pprint({f"game_{self.game_id}": self.game.stats()})
 
     @abstractmethod
-    def _parse_line(self, line: str) -> Tuple[str, str, str]:
+    def _parse_log(self, line: str) -> LogEvent:
         pass
 

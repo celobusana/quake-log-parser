@@ -3,17 +3,16 @@ from pprint import pprint
 from typing import Tuple, Dict, List
 from exception import EventException, LogAnalyzerException
 from abc import ABC, abstractmethod
-from interface import GameEvent, Game, LogAnalyzer, LogReader
+from interface import GameEvent, Game, LogAnalyzer, LogReader, LogEvent
 from factory import GameEventFactory
 import logging
-
 
 class QuakeInitGameEvent(GameEvent):
 
     def __init__(self):
         super().__init__("InitGame")
 
-    def process(self, log_analyzer: "QuakeLogAnalyzer", log: str):
+    def process(self, log_analyzer: "QuakeLogAnalyzer", log_event: LogEvent):
         if hasattr(log_analyzer, "game") and log_analyzer.game:
             logging.warning("New game started before the previous one ended")
             log_analyzer.shutdown_game()
@@ -25,8 +24,8 @@ class QuakeClientConnectEvent(GameEvent):
     def __init__(self):
         super().__init__("ClientConnect")
 
-    def process(self, log_analyzer: "QuakeLogAnalyzer", log: str):
-        logging.debug(f"ClientConnect {log}")
+    def process(self, log_analyzer: "QuakeLogAnalyzer", log_event: LogEvent):
+        logging.debug(f"ClientConnect {log_event.log}")
 
 
 class QuakeShutdownGameEvent(GameEvent):
@@ -34,8 +33,8 @@ class QuakeShutdownGameEvent(GameEvent):
     def __init__(self):
         super().__init__("ShutdownGame")
 
-    def process(self, log_analyzer: "QuakeLogAnalyzer", log: str):
-        logging.debug(f"Shutdown {log}")
+    def process(self, log_analyzer: "QuakeLogAnalyzer", log_event: LogEvent):
+        logging.debug(f"Shutdown {log_event.log}")
         log_analyzer.shutdown_game()
 
 
@@ -44,7 +43,8 @@ class QuakeKillEvent(GameEvent):
     def __init__(self):
         super().__init__("Kill")
 
-    def process(self, log_analyzer: "QuakeLogAnalyzer", log: str):
+    def process(self, log_analyzer: "QuakeLogAnalyzer", log_event: LogEvent):
+        log = log_event.log
         details = log[log.find(":")+1:]
         weapon = details.rsplit(" ", 1)[-1]
         players = details.replace(f"by {weapon}", "").strip().split(" killed ")
@@ -86,7 +86,7 @@ class QuakeGame(Game):
     def add_kill_by_player(self, player: str, killed: str):
         points = 1
         if player == killed:
-            points = 0
+            points = -1
         if player == "<world>":
             player = killed
             points = -1
@@ -120,7 +120,7 @@ class QuakeLogAnalyzer(LogAnalyzer):
         
         super().__init__(file, quake_events)
 
-    def _parse_line(self, line: str) -> Tuple[str, str, str]:
+    def _parse_log(self, line: str) -> LogEvent:
         line = self._sanitize_line(line)
 
         TIME_FIELD_SIZE = line.find(" ") - 1
@@ -135,7 +135,7 @@ class QuakeLogAnalyzer(LogAnalyzer):
         event = log_split[0].strip()
         detail = log_split[1].strip()
 
-        return time, event, detail
+        return LogEvent(event, time, detail)
 
     def _sanitize_line(self, line: str) -> str:
         return line.strip()
