@@ -1,0 +1,2 @@
+- [x] Fix kill count kill by means and by players are diff of total kills
+- [ ] Organize the code and make more interfaces
