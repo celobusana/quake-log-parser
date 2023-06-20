@@ -12,9 +12,25 @@ class LogEventFactory:
         self.events = {}
 
     def register(self, event: "LogEvent"):
+        """Register a new event in the factory.
+
+        Args:
+            event (LogEvent): Event object to be registered.
+        """
         self.events[event.id] = event
 
     def get(self, event_id: str) -> "LogEvent":
+        """Get an event from the factory based on id
+
+        Args:
+            event_id (str): Event id.
+
+        Raises:
+            EventException: If the event is not registered.
+
+        Returns:
+            LogEvent: Event object.
+        """
         if event_id not in self.events:
             raise EventException(f"Event {event_id} not registered")
         return self.events[event_id]
@@ -44,10 +60,16 @@ class LogAnalyzer(ABC):
         self.events = events
 
     def process(self):
+        """Process the log file."""
         for record in self.log.get_records():
-            self._process_log(record)
+            self._process_log_record(record)
 
-    def _process_log(self, line: str):
+    def _process_log_record(self, line: str):
+        """Process one log record.
+
+        Args:
+            line (str): Log record.
+        """
         try:
             log_event = self._parse_log(line)
             self._process_log_event(log_event)
@@ -57,15 +79,12 @@ class LogAnalyzer(ABC):
             logging.exception(e)
 
     def _process_log_event(self, log_event: LogEventDto):
+        """Process one log event. This method will call the event processor.
+
+        Args:
+            log_event (LogEventDto): Log event DTO object.
+        """
         self.events.get(log_event.event).process(self, log_event)
-
-    def shutdown_game(self):
-        self.print_game_stats()
-        self.game_id += 1
-        del self.game
-
-    def print_game_stats(self):
-        pprint({f"game_{self.game_id}": self.game.stats()})
 
     @abstractmethod
     def _parse_log(self, line: str) -> LogEventDto:

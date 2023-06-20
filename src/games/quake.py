@@ -32,7 +32,8 @@ class QuakeShutdownLogEvent(LogEvent):
 
     def process(self, log_analyzer: "QuakeLogAnalyzer", log_event: LogEventDto):  # type: ignore
         logging.debug(f"Shutdown {log_event.log}")
-        log_analyzer.shutdown_game()
+        log_analyzer.game.shutdown()
+        del (log_analyzer.game)
 
 
 class QuakeKillEvent(LogEvent):

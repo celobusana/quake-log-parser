@@ -14,12 +14,12 @@ parser.add_argument(
 )
 parser.add_argument("--log-file", help="Define the log file")
 args = parser.parse_args()
-
 logging.basicConfig(level=args.log_level)
 
-LOG_FILE = os.path.join(os.getcwd(), args.log_file)
+if __name__ == "__main__":
+    logging.info("Starting Quake Log Analyzer")
+    LOG_FILE = os.path.join(os.getcwd(), args.log_file)
+    file = LogFileReader(LOG_FILE)
 
-file = LogFileReader(LOG_FILE)
-
-quake_log_analyzer = QuakeLogAnalyzer(file)
-quake_log_analyzer.process()
+    quake_log_analyzer = QuakeLogAnalyzer(file)
+    quake_log_analyzer.process()

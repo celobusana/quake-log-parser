@@ -1,6 +1,8 @@
 - [X] Fix kill count kill by means and by players are diff of total kills
 - [X] Organize the code and make more interfaces
 - [X] Change _parse_line contract to a specif object ou dict
+- [ ] Finish function documentation
+- [ ] Unit tests
 
 # CODE QUALITY
 - [X] Update readme
